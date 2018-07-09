@@ -37,5 +37,4 @@ def extract_regions(arrays, regions=regions):
     to the metadata containg the regions for this scan):
     >>> extract_regions(db[XXXX].data, db[XXXX].start.rixscam.regions)
     '''
-    for arr in arrays:
-        yield pre_proc.extract_regions(arr, regions)
+    yield pre_proc.extract_regions(arrays, regions)

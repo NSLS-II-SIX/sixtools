@@ -39,8 +39,8 @@ def test_extract_regions(data, regions, expected_extracted_regions):
     # test extract_regions.
     for region in regions:
         expecteds = expected_extracted_regions[region]
-        found = next(pre_proc.extract_regions(data, regions))[region]
+        found = next(pre_proc.extract_regions(data, regions))
         for i in range(0, len(expecteds)):
             expected = expecteds[i]
-            actual = found[i]
+            actual = found[region][i]
             assert np.allclose(actual, expected)
