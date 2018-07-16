@@ -5,7 +5,7 @@ from sixtools import preliminary_processing as pre_proc
 
 def create_raw_data():
     # create a generator of 2D numpy aray lists.
-    for j in range(0,3):
+    for j in range(0, 3):
         # generate a list of 2D numpy arrays.
         out_list = []
         for i in range(0, 3):
@@ -38,8 +38,8 @@ def expected_extracted_regions():
 
 def test_extract_region(regions, expected_extracted_regions):
     # test extract_region.
-    raw_data=create_raw_data() #this is done in this way as I need a
-                               #generator object.
+    raw_data = create_raw_data()
+    # The above line is done in this way as I need a generator object.
     for region in regions:
         expecteds = expected_extracted_regions[region]
         found = next(pre_proc.extract_region(raw_data, region, regions))
