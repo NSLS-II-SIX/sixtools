@@ -1,41 +1,54 @@
-from rixs import preliminary_processing as pre_proc
-
 # This dictionary should eventually disappear, we should have this region
 # dictionary saved as a configuration attribute of rixscam. At this point
 # we should change the default for regions in extract_regions to None.
 # Also the manual is really confusing regarding what numbers need to go here,
 # we should discuss this.
-regions = {'dark1': [2, 1635, 4, 1601], 'image1': [1651, 3286, 4, 1601],
-           'dark2': [2, 1635, 4, 1601], 'image2': [1651, 3286, 4, 1601]}
+regions = {'dark_low2theta': [slice(2, 1635), slice(4, 1601)],
+           'data_low2theta': [slice(1651, 3286), slice(4, 1601)],
+           'dark_high2theta': [slice(2, 1635), slice(4, 1601)],
+           'data_high2theta': [slice(1651, 3286), slice(4, 1601)]}
 
 
-def extract_regions(arrays, regions=regions):
-    '''Extracts the images and dark regions from a series of images.
+def extract_region(raw_data, region, regions=regions):
+    '''Extracts the data and dark regions from a set of raw detector arrays.
 
     This function takes in a generator which yields a raw rixscam image and
-    returns a generator that yields a dictionary containing the 2D numpy
-    array for each region in regions.
+    returns a generator that yields a list containing the 2D numpy
+    array for each region defined by 'region'.
 
     Parameters
     ----------
-    arrays : generator
-        This is a generator that yields a list of 2D arrays.
+    raw_data : generator
+        This is a generator that yields a list of 2D arrays (as given by
+        db[XXXX]data).
+    region : string
+        The name of the region defined in 'regions' that we need to extract.
     regions : dict
-        A dictionary containg the region names as keys and a tuple with the
-        form [left, right, top, bottom] as the value.
+        A dictionary containing the region names as keys of the form:
+        .. code-block::
+            {region_1: [slice(x_min_1, x_max_1), slice(y_min_1, y_max_1)], ...
+             region_n: [slice(x_min_n, x_max_n), slice(y_min_n, y_max_n)}
 
     Returns
     -------
     out_generator : generator
-        A generator that yields a dictionary for each 2D array in 'scans'. The
-        dictionary has the form {'region1_name': region1, ......}
+        A generator that yields a list of arrays for each list in 'raw_data'
+        containing the data from 'region'.
 
     Examples
     --------
     This is intended to be used in the following, one line, call with XXXX
     being a scan_id or equivalent (start.rixscam.regions is suppose to point
-    to the metadata containg the regions for this scan):
-    >>> extract_regions(db[XXXX].data, db[XXXX].start.rixscam.regions)
+    to the metadata containing the regions for this scan):
+    >>> extract_regions(db[XXXX].data, region, db[XXXX].start.rixscam.regions)
     '''
-    for arr in arrays:
-        yield pre_proc.extract_regions(arr, regions)
+    # step through each of the 'events' ('yields') in raw_data
+    for event in raw_data:
+        # extract out the first list of arrays
+        for arrays in event:
+            out_list = []
+            for arr in arrays:
+                # extract out the region from the array and append to out_list
+                out_list.append(arr[regions[region]])
+
+        yield out_list

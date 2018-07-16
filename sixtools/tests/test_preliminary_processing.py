@@ -35,11 +35,11 @@ def expected_extracted_regions():
     return out_dict
 
 
-def test_extract_regions(data, regions, expected_extracted_regions):
-    # test extract_regions.
+def test_extract_region(data, regions, expected_extracted_regions):
+    # test extract_region.
     for region in regions:
         expecteds = expected_extracted_regions[region]
-        found = next(pre_proc.extract_regions(data, regions))[region]
+        found = next(pre_proc.extract_region(data, region, regions))
         for i in range(0, len(expecteds)):
             expected = expecteds[i]
             actual = found[i]
