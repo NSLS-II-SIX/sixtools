@@ -28,8 +28,8 @@ def extract_region(raw_data, region, regions=regions):
     regions : dict
         A dictionary containing the region names as keys of the form:
         .. code-block::
-            {region_1: [slice(x_min_1, x_max_1), slice(y_min_1, y_max_1)], ...
-             region_n: [slice(x_min_n, x_max_n), slice(y_min_n, y_max_n)}
+            {region_1: np.s_[x_min_1:x_max_1, y_min_1:y_max_1], ...
+             region_n: np.s_[x_min_n:x_max_n, y_min_n:y_max_n]}
 
     Returns
     -------
@@ -42,15 +42,14 @@ def extract_region(raw_data, region, regions=regions):
     This is intended to be used in the following, one line, call with XXXX
     being a scan_id or equivalent (start.rixscam.regions is suppose to point
     to the metadata containing the regions for this scan):
-    >>> extract_regions(db[XXXX].data, region, db[XXXX].start.rixscam.regions)
+    >>> extract_region(db[XXXX].data, region, db[XXXX].start.rixscam.regions)
     '''
     # step through each of the 'events' ('yields') in raw_data
     for event in raw_data:
-        # extract out the first list of arrays
-        for arrays in event:
-            out_list = []
-            for arr in arrays:
-                # extract out the region from the array and append to out_list
-                out_list.append(arr[regions[region]])
+        # extract out each array in the list
+        out_list = []
+        for arr in event:
+            # extract out the region from the array and append to out_list
+            out_list.append(arr[regions[region]])
 
         yield out_list

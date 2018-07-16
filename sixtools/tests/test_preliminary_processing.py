@@ -18,7 +18,7 @@ def regions():
     # generate a 'regions' dictionary.
     out_dict = {}
     for i in range(0, 3):
-        out_dict['region_{}'.format(i)] = [1, 3, 0, 2]
+        out_dict['region_{}'.format(i)] = np.s_[1:3, 0:2]
 
     return out_dict
 
