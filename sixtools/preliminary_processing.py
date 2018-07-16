@@ -1,12 +1,14 @@
+import numpy as np
+
 # This dictionary should eventually disappear, we should have this region
 # dictionary saved as a configuration attribute of rixscam. At this point
 # we should change the default for regions in extract_regions to None.
 # Also the manual is really confusing regarding what numbers need to go here,
 # we should discuss this.
-regions = {'dark_low2theta': [slice(2, 1635), slice(4, 1601)],
-           'data_low2theta': [slice(1651, 3286), slice(4, 1601)],
-           'dark_high2theta': [slice(2, 1635), slice(4, 1601)],
-           'data_high2theta': [slice(1651, 3286), slice(4, 1601)]}
+regions = {'dark_low2theta': np.s_[2:1635, 4:1601],
+           'data_low2theta': np.s_[1651:3286, 4:1601],
+           'dark_high2theta': np.s_[2:1635, 4:1601],
+           'data_high2theta': np.s_[1651:3286, 4:1601]}
 
 
 def extract_region(raw_data, region, regions=regions):
