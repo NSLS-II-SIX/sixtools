@@ -23,13 +23,7 @@ script:
   - codecov  # Upload the report to codecov.
   - flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
   - set -e
-  #build docs
-  - |
-    if [ $BUILD_DOCS]; then
-        pushd doc
-        make html
-        popd
-        #publish docs
-        doctr deploy --deploy-repo NSLS-II-SIX/NSLS-II-SIX.github.io --deploy-branch-name master sixtools
-
-    fi
+    # build docs
+  - make -C docs html
+    #publish docs
+  - doctr deploy --built-docs docs/build/html --deploy-repo NSLS-II-SIX/sixtools
