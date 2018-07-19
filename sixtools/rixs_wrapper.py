@@ -191,7 +191,7 @@ def interp_robust(x, xp, fp):
     """
     Wrapper around scipy to interpolate data with either
     increasing or decreasing x
-    
+
     Parameters
     ----------
     x : array
@@ -209,4 +209,3 @@ def interp_robust(x, xp, fp):
     func = interp1d(xp, fp, bounds_error=False, fill_value=np.NaN)
     f = func(x)
     return f
-    
