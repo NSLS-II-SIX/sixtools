@@ -12,9 +12,17 @@ install:
   # Install extra requirements for running tests and building docs.
   - pip install -r requirements-dev.txt
 
+env:
+   global:
+    # Doctr deploy key for NSLS-II-SIX/sixtools
+    - secure: "UG3NQz4KFsIdYsHhqpbeImJczqWMm6TsrOi6HXvdM+v93RUZW87J/ahZ537pEU3WF1pF3IK0yLbCz7angLf0o2r2KDP2h70h7mx5v1o2hXyhqHibcDkkAg2p9J28xQ9yiZHohS/ARRReBAMjf5g1LPVQ20pxCEDpCX7+HXgN9WqOIKbugvqF4o1len6U3lFlduAiukM8rkfdNs+lSn8fLUlCGLdUOw5e45P66mABZ8dpcP36bZUAdCG0wp/VaXPHWaGog5tA+/l75HjGFhJd7CragCXy9Lfo9MtrimPJmprUiQ46ckBIQzUDtLMygBA9/p+ywwqphUoidCqDYNECWUm2TDBbUpSrEG7CPTnbLnQRTPTtunVWe8RDOO6GvQXalAUJSfd8C2MeJ9qKp5Kb4q6v/L2uvCYN+0CJ6+ex85UGJgQKctBB/blU9PlofN4p67TDsp9rs0AkkgQ3OXx/+CS6AfVFkhEPFhF15MxZHVnj8A9S5Hb6Qc2smFiyiIWoDiOG/prZA/VRBI4lcFJ0et5qNTJ+LdFNnURcXtyV/dVJthas6+ceK+kjA3oOEtveqys1imLkvx/u4kGBwzDO5yhObsD8SuXsWd3UJFXW3OSAkZoAYQM6sVio56Kd0TiqhWGLYixQgbHBxQa5Nuw8kd+X0Cb4gafmmC6LN8XISVE="
+
 script:
   - coverage run -m pytest  # Run the tests and check for test coverage.
   - coverage report -m  # Generate test coverage report.
   - codecov  # Upload the report to codecov.
   - flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
-  - make -C docs html  # Build the documentation.
+  - set -e  # Stop here if anything fails above
+  - make -C docs html  # Build the documentation
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html .  # Publish the documentation
