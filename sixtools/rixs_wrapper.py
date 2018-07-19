@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.interpolate import interp1d
 from pims import pipeline
 from rixs.process2d import apply_curvature, image_to_photon_events
 
@@ -162,33 +163,6 @@ def make_scan(headers, light_ROI=[slice(None, None, None),
     return scan
 
 
-# Probably can be removed if calibrate in implemented properly
-def cal_S(S, elastic, energy_per_pixel):
-    """Apply elastic subtraction and energy per pixel calibration.
-
-    Parameters
-    ----------
-    S : array
-        2D y, intensity spectrum
-    elastic : y value to set to zero
-    energy_per_pixel : float
-        convert pixel to energy loss
-
-    Returns
-    -------
-    S : array
-        2D y, intensity spectrum
-        after calibration
-    """
-    Sout = np.copy(S)
-    Sout[:, 0] -= elastic
-    Sout[:, 0] *= energy_per_pixel
-    order = np.argsort(Sout[:, 0])
-    return Sout[order, :]
-
-
-# There is doubtless a numpy implementation of this
-# but I can't work it out.
 def calibrate(scan, elastics, energy_per_pixel):
     """Apply energy per pixel and energy zero calibration.
 
@@ -197,8 +171,42 @@ def calibrate(scan, elastics, energy_per_pixel):
     scan : array
         4D array of RIXS spectra with structure
         event, image_index, y, I
+    elastics : array
+        Elastic pixels to subtract to set energy zero
+        2D array shape (event, images per event)
+
+    Returns
+    -------
+    scan_out : array
+        calibrated scans
+        4D array of RIXS spectra with structure
+        event, image_index, y, I
     """
-    scan_out = np.array([[cal_S(S, el, energy_per_pixel)
-                          for S, el in zip(event, el_event)]
-                         for event, el_event in zip(scan, elastics)])
+    scan_out = scan - elastics[:, :, np.newaxis, np.newaxis]
+    scan_out[:, :, :, 0] *= energy_per_pixel
     return scan_out
+
+
+def interp_robust(x, xp, fp):
+    """
+    Wrapper around scipy to interpolate data with either
+    increasing or decreasing x
+    
+    Parameters
+    ----------
+    x : array
+        values to interprate onto
+    xp : array
+        original x values
+    fp : array
+        original values of function
+
+    Returns
+    -------
+    f : array
+        values interpolated at x
+    """
+    func = interp1d(xp, fp, bounds_error=False, fill_value=np.NaN)
+    f = func(x)
+    return f
+    
