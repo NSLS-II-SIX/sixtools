@@ -22,8 +22,7 @@ script:
   - coverage report -m  # Generate test coverage report.
   - codecov  # Upload the report to codecov.
   - flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
-  - set -e
-    # build docs
-  - make -C docs html
-    #publish docs
-  - doctr deploy --built-docs docs/build/html --deploy-repo NSLS-II-SIX/sixtools
+  - set -e  # Stop here if anything fails above
+  - make -C docs html  # Build the documentation
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html  # Publish the documentation
