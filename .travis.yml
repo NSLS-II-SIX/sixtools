@@ -25,4 +25,4 @@ script:
   - set -e  # Stop here if anything fails above
   - make -C docs html  # Build the documentation
   - pip install doctr
-  - doctr deploy --built-docs docs/build/html  # Publish the documentation
+  - doctr deploy --built-docs docs/build/html .  # Publish the documentation
