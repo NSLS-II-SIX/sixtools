@@ -37,6 +37,7 @@ def image_to_spectrum(image, light_ROI=[slice(None, None, None),
         These are in decreasing order e.g.
         .. code-block:: python
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
+        The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
         The bin specification in y then x order:
             * If int, the number of bins for the two dimensions (nx=ny=bins).
@@ -69,9 +70,10 @@ def image_to_spectrum(image, light_ROI=[slice(None, None, None),
 def get_rixs(header, light_ROI=[slice(None, None, None),
                                 slice(None, None, None)],
              curvature=np.array([0., 0., 0.]), bins=None,
-             background=None):
+             background=None,
+             detector='rixscam_image'):
     """
-    Create rixs according to procces_dict
+    Create rixs spectra according to procces_dict
     and return data as generator with similar behavior to
     header.data()
 
@@ -86,8 +88,10 @@ def get_rixs(header, light_ROI=[slice(None, None, None),
         These are in decreasing order e.g.
         .. code-block:: python
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
+        The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
         The bin specification in y then x order:
+            * If bins is None a step of 1 is assumed over the relevant range
             * If int, the number of bins for the two dimensions (nx=ny=bins).
             * If array_like, the bin edges for the two dimensions
               (y_edges=x_edges=bins).
@@ -99,6 +103,8 @@ def get_rixs(header, light_ROI=[slice(None, None, None),
               is the number of bins and array is the bin edges.
     background : array
         2D array for background subtraction
+    detector : string
+        name of the detector passed on header.data
 
     Yields
     -------
@@ -106,7 +112,7 @@ def get_rixs(header, light_ROI=[slice(None, None, None),
         Array-like object contains scans associated with an event.
         If the input is a list of headers the output is a list of
     """
-    for ImageStack in header.data('rixscam_image'):
+    for ImageStack in header.data(detector):
         yield image_to_spectrum(ImageStack, light_ROI=light_ROI,
                                 curvature=curvature, bins=bins,
                                 background=background)
@@ -131,6 +137,7 @@ def make_scan(headers, light_ROI=[slice(None, None, None),
         These are in decreasing order e.g.
         .. code-block:: python
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
+        The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
         The bin specification in y then x order:
             * If int, the number of bins for the two dimensions (nx=ny=bins).
