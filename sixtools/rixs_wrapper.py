@@ -36,6 +36,7 @@ def image_to_spectrum(image, light_ROI=[slice(None, None, None),
         The polynominal coeffcients describing the image curvature.
         These are in decreasing order e.g.
         .. code-block:: python
+
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
         The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
@@ -87,6 +88,7 @@ def get_rixs(header, light_ROI=[slice(None, None, None),
         The polynominal coeffcients describing the image curvature.
         These are in decreasing order e.g.
         .. code-block:: python
+
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
         The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
@@ -136,6 +138,7 @@ def make_scan(headers, light_ROI=[slice(None, None, None),
         The polynominal coeffcients describing the image curvature.
         These are in decreasing order e.g.
         .. code-block:: python
+
            curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
         The order of polynominal used is set by len(curvature) - 1
     bins : int or array_like or [int, int] or [array, array]
