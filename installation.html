@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; sixtools 0.post6+g352208c documentation</title>
+  <title>Installation &mdash; sixtools 0.post15+g10fe8cf documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.post6+g352208c
+                0.post15+g10fe8cf
               </div>
             
           
@@ -152,10 +152,19 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install sixtools
+<ol class="arabic">
+<li><p class="first">Create and activate a conda environment following <a class="reference external" href="https://nsls-ii.github.io/conda.html?highlight=conda/">NSLS-II Conda Instructions</a></p>
+</li>
+<li><p class="first">Install the software via the the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone sixtools
+$ cd sixtools
+$ python3 -m pip install -e .
 </pre></div>
 </div>
+</li>
+<li><p class="first">Looking at or using the example notebooks in the sixtools repository should be a good place to start.</p>
+</li>
+</ol>
 </div>
 
 
@@ -200,7 +209,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.post6+g352208c',
+            VERSION:'0.post15+g10fe8cf',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
