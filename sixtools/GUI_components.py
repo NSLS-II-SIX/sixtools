@@ -89,7 +89,7 @@ baseline_display = ipywidgets.HTML('Baseline')
 
 
 def wrap_refresh(change):
-    """Query the databroker with user supplier text."""
+    """Query the databroker with user supplied text."""
     try:
         query = eval("dict({})".format(db_search_widget.value))
         headers = db(**query)
