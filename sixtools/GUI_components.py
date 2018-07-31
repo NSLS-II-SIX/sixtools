@@ -9,8 +9,7 @@ import ipywidgets
 from traitlets import TraitError
 
 # Set defaults
-pd.set_option('display.height', 500)
-pd.set_option('display.max_rows', 500)
+pd.set_option('max_rows', 500)
 matplotlib.rcdefaults()
 markers = cycle(['o', 's', '^', 'v', 'p', '<', '>', 'h'])
 
