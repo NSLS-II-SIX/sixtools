@@ -12,7 +12,7 @@ sixtools
 Software for performing resonant inelastic xray scattering analysis at NSLS-II
 
 * Free software: 3-clause BSD license
-* Documentation: (COMING SOON!) https://awalter-bnl.github.io/sixtools.
+* Documentation: https://nsls-ii-six.github.io/sixtools/.
 
 Features
 --------
