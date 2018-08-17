@@ -61,4 +61,4 @@ or alternatively one can plot all individual spectra
             ax.plot(S[:,0], S[:,1])
 
 Powerful numpy broadscating methods can be used to manuipuate the whole scan at once. See `Numpy documentation
-<https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_ or the `calibrate` function in `sixtools.rixswrapper`
+<https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_ or the `calibrate` function in `sixtools.rixswrapper`.
