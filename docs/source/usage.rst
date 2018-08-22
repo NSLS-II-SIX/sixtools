@@ -4,6 +4,7 @@ Usage
 
 RIXS spectra at SIX are represented as two-column arrays of values, where the axes are energy loss and intensity. If we call such as spectrum ``S``, it can be plotted by
 
+
 .. code-block:: python
 
     import matplotlib.pyplot as plt
@@ -28,6 +29,7 @@ RIXS spectra at SIX are represented as two-column arrays of values, where the ax
 
 The use of BlueSky at SIX allows us to take RIXS spectra at a series of different conditions in a single operation or scan. For example one could vary the scattering angle :math:`\theta` to measure at low, medium and high :math:`\theta`. The scan containing all spectra is retrieved via
 
+
 .. code-block:: python
 
     from sixtools.rixswrapper import make_scan
@@ -36,6 +38,7 @@ The use of BlueSky at SIX allows us to take RIXS spectra at a series of differen
     scan = make_scan(db[21110])
 
 ``scan`` is then a 4D numpy array. Its axes are:
+
 
 * axis 0 -- event in scan
 * axis 1 -- frame in event
@@ -81,6 +84,7 @@ These summed spectra could be plotted by against :math:`\theta`, which we can re
     ax.legend()
 
 
+
 or alternatively one can plot all individual spectra
 
 .. code-block:: python
@@ -122,3 +126,4 @@ or alternatively one can plot all individual spectra
 
 Powerful numpy broadcasting methods can be used to manipulate the whole scan at once. See `Numpy documentation
 <https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_ or the ``calibrate`` function in ``sixtools.rixswrapper``.
+
