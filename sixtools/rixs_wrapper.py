@@ -173,17 +173,23 @@ def make_scan(headers, light_ROI=[slice(None, None, None),
     return scan
 
 
-def calibrate(scan, elastics, energy_per_pixel):
-    """Apply energy per pixel and energy zero calibration.
+def calibrate(scan, elastics=None, energy_per_pixel=1, I0s=None):
+    """Apply energy per pixel, I0 and energy zero calibration.
 
-    Parameter
+    Parameters
     ---------
     scan : array
         4D array of RIXS spectra with structure
         event, image_index, y, I
     elastics : array
         Elastic pixels to subtract to set energy zero
-        2D array shape (event, images per event)
+        2D array with shape (event, images per event)
+    energy_per_pixel : float
+        Multiply all pixel (y) values by this number
+        to convert pixel index to energy loss
+    I0s : array
+        Intensity motor to divide all intensities by
+        2D array with shape (event, images per event)
 
     Returns
     -------
@@ -192,8 +198,14 @@ def calibrate(scan, elastics, energy_per_pixel):
         4D array of RIXS spectra with structure
         event, image_index, y, I
     """
+    if elastics is None:
+        elastics = np.zeros(scan.shape[0:2])
+    if I0s is None:
+        I0s = np.ones(scan.shape[0:2])
+
     scan_out = scan - elastics[:, :, np.newaxis, np.newaxis]
-    scan_out[:, :, :, 0] *= energy_per_pixel
+    scan_out[:, :, :, 0:1] *= energy_per_pixel
+    scan_out[:, :, :, 1:2] /= I0s[:, :, np.newaxis, np.newaxis]
     return scan_out
 
 
