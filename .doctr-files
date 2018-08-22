@@ -1,3 +1,6 @@
+./_images/usage-1.png
+./_images/usage-2.png
+./_images/usage-3.png
 ./_sources/index.rst.txt
 ./_sources/installation.rst.txt
 ./_sources/release-history.rst.txt
@@ -63,4 +66,16 @@
 ./release-history.html
 ./search.html
 ./searchindex.js
+./usage-1.hires.png
+./usage-1.pdf
+./usage-1.png
+./usage-1.py
+./usage-2.hires.png
+./usage-2.pdf
+./usage-2.png
+./usage-2.py
+./usage-3.hires.png
+./usage-3.pdf
+./usage-3.png
+./usage-3.py
 ./usage.html
