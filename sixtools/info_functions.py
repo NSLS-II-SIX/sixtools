@@ -1,7 +1,7 @@
 from blueksy import simulators
 
 
-def list_scans(plan):
+def list_scans(plan, db):
     '''Print a summary of a plan, with some SIX specific info
 
     Prints a version of the plan, showing moves that occur outside of runs, and
@@ -22,6 +22,9 @@ def list_scans(plan):
     ----------
     plan: iterable
         must yield'Msg' objects
+
+    db: databroker.
+        The databroker that the scans are being logged in.
 
     '''
 
@@ -51,7 +54,8 @@ def list_scans(plan):
                 changed_motors.append(','+set_string)
 
 
-def check_plan(plan, check_limits=True, scan_list=True, summarize_plan=False):
+def check_plan(plan, db, check_limits=True, scan_list=True,
+               summarize_plan=False):
     '''This is meant to be a 'complete' collection of all possible 'prechecks'
        for plans.
 
@@ -64,6 +68,9 @@ def check_plan(plan, check_limits=True, scan_list=True, summarize_plan=False):
     ----------
     plan: generator.
         The plan generator that is to be checked.
+
+    db: databroker.
+        The databroker that the scans are being logged in.
 
     check_limits: boolean, optional.
         A boolean that indicates if the limits should be checked for this plan.
