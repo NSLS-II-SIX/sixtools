@@ -18,6 +18,13 @@ def list_scans(plan, db):
         given by the 'reason' kwarg in he scans metadata and Yi is the value
         that motor1 was set too prior to running the scan.
 
+    A partial reference to this should be made in the startup folder using:
+
+    .. codeblock:: python
+       from sixtools import list_scans
+       def list_scans = partial(list_scans, db=db)
+
+
     Parameters
     ----------
     plan: iterable
@@ -64,6 +71,12 @@ def check_plan(plan, db, check_limits=True, scan_list=True,
     every step, but this can be added by setting the summarize_plan kwarg to
     True.
 
+    A partial reference to this should be made in the startup folder using:
+
+    .. codeblock:: python
+       from sixtools import check_plan
+       def check_plan = partial(check_plan, db=db)
+
     Parameters
     ----------
     plan: generator.
@@ -87,7 +100,7 @@ def check_plan(plan, db, check_limits=True, scan_list=True,
         simulators.check_limits(plan)
 
     if scan_list:
-        list_scans(plan)
+        list_scans(plan, db)
 
     if summarize_plan:
         simulators.summarize_plan(plan)
