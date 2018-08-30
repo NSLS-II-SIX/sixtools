@@ -35,18 +35,18 @@ def list_scans(plan, db):
 
     '''
 
-    in_run = 0  # A way to track if we are in a run or not.
+    in_run = False  # A way to track if we are in a run or not.
     prev_scanID = db[-1].start['scan_id']  # The previous scan ID
     changed_motors = ''  # The value of any changed motors
 
     for msg in plan:
         if in_run:
             if msg.command == 'close_run':
-                in_run = 0
+                in_run = False
                 changed_motors = ''
         else:
             if msg.command == 'open_run':
-                in_run = 1
+                in_run = True
                 prev_scanID += 1
                 scan_string = 'scan no {}'.format(prev_scanID)
                 try:  # If a reason is given in the metadata include it.
