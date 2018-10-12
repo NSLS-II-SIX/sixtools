@@ -56,9 +56,9 @@ class HDF5SingleHandler_centroid7xn(HandlerBase):
         ret = []
         import h5py
         for fn in self._fnames_for_point(point_number):
-            f = h5py.File(fn, 'r')
-            dataframe = pd.DataFrame(np.array(f[self._key]),
-                                     columns=self._column_names)
+            with h5py.File(fn, 'r') as f:
+                dataframe = pd.DataFrame(np.array(f[self._key]),
+                                         columns=self._column_names)
             ret.append(dataframe)
         return ret
 
