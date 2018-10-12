@@ -69,7 +69,7 @@ class HDF5SingleHandler_centroid7xn(HandlerBase):
         return ret
 
 
-class AreaDetectorHDF5SingleHandler(HDF5SingleHandler_centroid7xn):
+class AreaDetectorHDF5SingleHandler_centroid7xn(HDF5SingleHandler_centroid7xn):
     '''Handler for hdf5 data stored 1 image per file by areadetector from the
     rixscam xip plugin.
 
@@ -102,6 +102,6 @@ class AreaDetectorHDF5SingleHandler(HDF5SingleHandler_centroid7xn):
     '''
     def __init__(self, fpath, template, filename, frame_per_point=1):
         hardcoded_key = '/entry/data/data'
-        super(AreaDetectorHDF5SingleHandler, self).__init__(
-            fpath=fpath, template=template, filename=filename,
-            key=hardcoded_key, frame_per_point=frame_per_point)
+        super(AreaDetectorHDF5SingleHandler_centroid7xn, self).__init__(
+              fpath=fpath, template=template, filename=filename,
+              key=hardcoded_key, frame_per_point=frame_per_point)
