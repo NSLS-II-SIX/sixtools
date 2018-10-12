@@ -66,6 +66,3 @@ class AreaDetectorHDF5SingleHandler(HDF5SingleHandler):
         super(AreaDetectorHDF5SingleHandler, self).__init__(
             fpath=fpath, template=template, filename=filename,
             key=hardcoded_key, frame_per_point=frame_per_point)
-
-
-db.reg.register_handler('AD_HDF5_SINGLE', AreaDetectorHDF5SingleHandler)
