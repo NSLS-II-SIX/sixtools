@@ -19,7 +19,7 @@ class HDF5SingleHandler_centroid7xn(HandlerBase):
         column 7: XIP mode (which I assume to be either 3x3 or 2x2)
 
     This handler will ouput the data as a pandas dataframe with the 'fields'
-    (in order): `x`, `y`, `x_eta`, `y_eta`, `y_eta_+_iso`, `sum regions`,
+    (in order): `x`, `y`, `x_eta`, `y_eta`, `y_eta_iso`, `sum regions`,
     XIP_mode.
 
     Parameters
@@ -86,7 +86,7 @@ class AreaDetectorHDF5SingleHandler_centroid7xn(HDF5SingleHandler_centroid7xn):
         column 7: XIP mode (which I assume to be either 3x3 or 2x2)
 
     This handler will ouput the data as a pandas dataframe with the 'fields'
-    (in order): `x`, `y`, `x_eta`, `y_eta`, `y_eta_+_iso`, `sum regions`,
+    (in order): `x`, `y`, `x_eta`, `y_eta`, `y_eta_iso`, `sum regions`,
     XIP_mode.
 
     Parameters
