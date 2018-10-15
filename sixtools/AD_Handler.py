@@ -43,7 +43,7 @@ class HDF5SingleHandler_centroid7xn(HandlerBase):
         self._template = template
         self._filename = filename
         self._key = key
-        self._column_names = ['x', 'y', 'x_eta', 'y_eta', 'y_eta+iso',
+        self._column_names = ['x', 'y', 'x_eta', 'y_eta', 'y_eta_iso',
                               'sum_regions', 'XIP_mode']
 
     def _fnames_for_point(self, point_number):
