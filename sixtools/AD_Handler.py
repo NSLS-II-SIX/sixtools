@@ -20,6 +20,8 @@ class AreaDetector_HDF5SingleHandler_DataFrame(HandlerBase):
         filename
     key : string
         the 'path' inside the file to the data set.
+    column_names : list[str]
+        The column names of the table
     frame_per_point : float
         the number of frames per point.
     '''
