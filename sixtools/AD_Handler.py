@@ -1,7 +1,6 @@
 from databroker.assets.handlers_base import HandlerBase
 import os.path
 import pandas as pd
-import numpy as np
 
 
 class AreaDetector_HDF5SingleHandler_DataFrame(HandlerBase):
@@ -48,7 +47,7 @@ class AreaDetector_HDF5SingleHandler_DataFrame(HandlerBase):
         import h5py
         for fn in self._fnames_for_point(point_number):
             with h5py.File(fn, 'r') as f:
-                dataframe = pd.DataFrame(np.array(f[self._key]),
+                dataframe = pd.DataFrame(f[self._key][:],
                                          columns=self._column_names)
             ret.append(dataframe)
         return ret
