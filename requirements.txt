@@ -1,6 +1,6 @@
 # List required packages in this file, one per line.
 databroker
-ipywidets
+ipywidgets
 matplotlib
 mpl_toolkits
 numpy
