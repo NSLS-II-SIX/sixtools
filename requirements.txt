@@ -1,1 +1,10 @@
 # List required packages in this file, one per line.
+databroker
+ipywidets
+matplotlib
+mpl_toolkits
+numpy
+pandas
+pims
+rixs
+scipy
