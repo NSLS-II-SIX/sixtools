@@ -2,7 +2,6 @@
 databroker
 ipywidgets
 matplotlib
-mpl_toolkits
 numpy
 pandas
 pims
