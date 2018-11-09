@@ -58,11 +58,11 @@ def image_to_spectrum(image, light_ROI=[slice(None, None, None),
     spectrum : array
         two column array of pixel, intensity
     """
-    try:
+    if background is None:
+        photon_events = image_to_photon_events(image[light_ROI])
+    else:
         photon_events = image_to_photon_events(image[light_ROI]
                                                - background[light_ROI])
-    except TypeError:
-        photon_events = image_to_photon_events(image[light_ROI])
 
     spectrum = apply_curvature(photon_events, curvature, bins)
     return spectrum
