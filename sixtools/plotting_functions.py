@@ -38,7 +38,7 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
     kwargs.update({key: val for key, val in defaults.items()
                    if key not in kwargs})
 
-    art = ax.imshow(frame, **kwargs)
+    art = ax.pcolorfast(frame, **kwargs)
     if cax is None:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="2%", pad=0.1)
@@ -55,8 +55,6 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
                         facecolor='none', edgecolor='w')
         ax.add_patch(box)
 
-    cax.set_xticks([])
-    cax.set_yticks([])
     return art, cax, cb
 
 
