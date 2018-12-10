@@ -55,8 +55,6 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
                         facecolor='none', edgecolor='w')
         ax.add_patch(box)
 
-    cax.set_xticks([])
-    cax.set_yticks([])
     return art, cax, cb
 
 
