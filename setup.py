@@ -37,7 +37,8 @@ setup(
     name='sixtools',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description="Software for performing resonant inelastic xray scattering analysis at NSLS-II",
+    description=("Software for performing resonant inelastic"
+                 " xray scattering analysis at NSLS-II"),
     long_description=readme,
     author="Brookhaven National Lab",
     author_email='awalter@bnl.gov',
