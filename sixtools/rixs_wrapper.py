@@ -22,6 +22,7 @@ process_dicts = {'low_2theta': process_dict_low_2theta,
 
 def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
                           curvature=np.array([0., 0., 0.]), bins=1,
+                          min_threshold=-np.inf, max_threshold=np.inf,
                           ADU_per_photon=1):
     """
     Convert a table of centroided events into a spectrum
@@ -48,6 +49,12 @@ def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
         in the bins sequence, which is created using the min/max
         of the input data. Half a bin may be discarded in order
         to avoid errors at the edge. (Default 1.)
+    min_threshold : float
+        fliter events below this threshold
+        defaults to -infinity to include all events
+    max_threshold : float
+        fliter events above this threshold
+        defaults to +infinity to include all events
     ADU_per_photon : float
         Conversion factor between the input intensity values in tabel
         and photons. (Default is 1)
@@ -60,7 +67,9 @@ def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
     choose = np.logical_and.reduce((table['x_eta'] >= light_ROI[0],
                                     table['x_eta'] < light_ROI[1],
                                     table['y_eta'] >= light_ROI[2],
-                                    table['y_eta'] < light_ROI[3]))
+                                    table['y_eta'] < light_ROI[3],
+                                    table['y_eta'] >= min_threshold,
+                                    table['y_eta'] < max_threshold))
 
     photon_events = table[choose][['x_eta', 'y_eta', 'sum_regions']].values
     photon_events[:, 2] = photon_events[:, 2]/ADU_per_photon
@@ -72,6 +81,7 @@ def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
 def image_to_spectrum(image, light_ROI=[0, np.inf, 0, np.inf],
                       curvature=np.array([0., 0., 0.]), bins=1,
                       ADU_per_photon=1,
+                      min_threshold=-np.inf, max_threshold=np.inf,
                       background=None):
     """
     Convert a 2D array of RIXS data into a spectrum
@@ -98,6 +108,12 @@ def image_to_spectrum(image, light_ROI=[0, np.inf, 0, np.inf],
         in the bins sequence, which is created using the min/max
         of the input data. Half a bin may be discarded in order
         to avoid errors at the edge. (Default 1.)
+    min_threshold : float
+        fliter events below this threshold
+        defaults to -infinity to include all events
+    max_threshold : float
+        fliter events above this threshold
+        defaults to +infinity to include all events
     ADU_per_photon : float
         Conversion factor between the input intensity values in tabel
         and photons. (Default is 1)
@@ -123,12 +139,16 @@ def image_to_spectrum(image, light_ROI=[0, np.inf, 0, np.inf],
     if background is None:
         ph_e = image_to_photon_events(image[choose],
                                       x_centers=x_centers,
-                                      y_centers=y_centers)
+                                      y_centers=y_centers,
+                                      min_threshold=min_threshold,
+                                      max_threshold=max_threshold)
     else:
         ph_e = image_to_photon_events(image[choose] -
                                       background[choose],
                                       x_centers=x_centers,
-                                      y_centers=y_centers)
+                                      y_centers=y_centers,
+                                      min_threshold=min_threshold,
+                                      max_threshold=max_threshold)
 
     photon_events = ph_e
     photon_events[:, 2] = photon_events[:, 2]/ADU_per_photon
@@ -138,7 +158,9 @@ def image_to_spectrum(image, light_ROI=[0, np.inf, 0, np.inf],
 
 def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
              curvature=np.array([0., 0., 0.]), bins=1, ADU_per_photon=None,
-             detector='rixscam_centroids', background=None):
+             detector='rixscam_centroids',
+             min_threshold=-np.inf, max_threshold=np.inf,
+             background=None):
     """
     Create rixs spectra according to procces_dict
     and return data as generator with similar behavior to
@@ -174,6 +196,12 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
         At SIX
         'rixscam_centroids' is the centroided data, which is the default
         'rixscam_image' is the image data
+    min_threshold : float
+        fliter events below this threshold
+        defaults to -infinity to include all events
+    max_threshold : float
+        fliter events above this threshold
+        defaults to +infinity to include all events
     background : array
         2D array for background subtraction
         Only used for image data.
@@ -204,6 +232,8 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
         for event in header.data(detector):
                 yield [centroids_to_spectrum(table, light_ROI=light_ROI,
                                              curvature=curvature, bins=bins,
+                                             min_threshold=min_threshold,
+                                             max_threshold=max_threshold,
                                              ADU_per_photon=ADU_per_photon)
                        for table in event]
     elif detector == 'rixscam_image':
@@ -211,6 +241,8 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
             yield image_to_spectrum(ImageStack, light_ROI=light_ROI,
                                     curvature=curvature, bins=bins,
                                     ADU_per_photon=ADU_per_photon,
+                                    min_threshold=min_threshold,
+                                    max_threshold=max_threshold,
                                     background=background)
     else:
         raise Warning("detector {} not reconized, but we will try to"
@@ -218,12 +250,15 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
         for ImageStack in header.data(detector):
             yield image_to_spectrum(ImageStack, light_ROI=light_ROI,
                                     curvature=curvature, bins=bins,
+                                    min_threshold=min_threshold,
+                                    max_threshold=max_threshold,
                                     background=background)
 
 
 def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
               curvature=np.array([0., 0., 0.]), bins=1,
-              detector='rixscam_centroids',
+              ADU_per_photon=1, detector='rixscam_centroids',
+              min_threshold=-np.inf, max_threshold=np.inf,
               background=None):
     """
     Make 4D array of RIXS spectra with structure
@@ -251,11 +286,20 @@ def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
         in the bins sequence, which is created using the min/max
         of the input data. Half a bin may be discarded in order
         to avoid errors at the edge. (Default 1.)
+    ADU_per_photon : float
+        Conversion factor between the input intensity values in table
+        and photons. (Default is 1)
     detector : string
-        name of the detector passed to header.data
+        name of the detector passed on header.data
         At SIX
         'rixscam_centroids' is the centroided data, which is the default
         'rixscam_image' is the image data
+    min_threshold : float
+        fliter events below this threshold
+        defaults to -infinity to include all events
+    max_threshold : float
+        fliter events above this threshold
+        defaults to +infinity to include all events
     background : array
         2D array for background subtraction
         Only used for image data.
@@ -271,6 +315,9 @@ def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
 
     rixs_generators = [get_rixs(h, light_ROI=light_ROI, curvature=curvature,
                                 bins=bins, detector=detector,
+                                ADU_per_photon=ADU_per_photon,
+                                min_threshold=min_threshold,
+                                max_threshold=max_threshold,
                                 background=background)
                        for h in headers]
 
