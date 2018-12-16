@@ -63,7 +63,7 @@ def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
                                     table['y_eta'] < light_ROI[3]))
 
     photon_events = table[choose][['x_eta', 'y_eta', 'sum_regions']].values
-    photon_events[:, 2] /= ADU_per_photon
+    photon_events[:, 2] = photon_events[:, 2]/ADU_per_photon
     spectrum = apply_curvature(photon_events, curvature, bins)
     return spectrum
 
@@ -131,13 +131,13 @@ def image_to_spectrum(image, light_ROI=[0, np.inf, 0, np.inf],
                                       y_centers=y_centers)
 
     photon_events = ph_e
-    photon_events[:, 2] = ADU_per_photon
+    photon_events[:, 2] = photon_events[:, 2]/ADU_per_photon
     spectrum = apply_curvature(photon_events, curvature, bins)
     return spectrum
 
 
 def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
-             curvature=np.array([0., 0., 0.]), bins=1, ADU_per_photon=1,
+             curvature=np.array([0., 0., 0.]), bins=1, ADU_per_photon=None,
              detector='rixscam_centroids', background=None):
     """
     Create rixs spectra according to procces_dict
@@ -183,21 +183,23 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
     spectra : generator
         RIXS spectra are returned as a generator
     """
-    if detector == 'rixscam_centroids':
-        try:
-            iter(bins)
-        except TypeError:
-            total_table = pd.concat(t for event in header.data(detector)
-                                    for t in event)
-            bins = step_to_bins(total_table['y_eta'].min(),
-                                total_table['y_eta'].max(), bins)
-
+    if ADU_per_photon is None:
         pgm_en = header.table(stream_name='baseline',
                               fields=['pgm_en']).mean().values.mean()
         if np.isnan(pgm_en):
             pgm_en = header.table(fields=['pgm_en']).mean().values.mean()
 
         ADU_per_photon = pgm_en * 1.12
+
+    if detector == 'rixscam_centroids':
+        try:
+            iter(bins)
+        except TypeError:
+            if np.isinf(light_ROI[3]):
+                total_table = pd.concat(t for event in header.data(detector)
+                                        for t in event)
+                light_ROI[3] = total_table['y_eta'].max()
+            bins = step_to_bins(light_ROI[2], light_ROI[3], bins)
 
         for event in header.data(detector):
                 yield [centroids_to_spectrum(table, light_ROI=light_ROI,
@@ -208,6 +210,7 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
         for ImageStack in header.data(detector):
             yield image_to_spectrum(ImageStack, light_ROI=light_ROI,
                                     curvature=curvature, bins=bins,
+                                    ADU_per_photon=ADU_per_photon,
                                     background=background)
     else:
         raise Warning("detector {} not reconized, but we will try to"
