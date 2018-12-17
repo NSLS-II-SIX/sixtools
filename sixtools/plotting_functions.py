@@ -49,9 +49,9 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
 
     for light_ROI in light_ROIs:
         box = Rectangle((light_ROI[0], light_ROI[2]),
-                light_ROI[1]-light_ROI[0],
-                light_ROI[3]-light_ROI[2],
-                facecolor='none', edgecolor='w')
+                        light_ROI[1]-light_ROI[0],
+                        light_ROI[3]-light_ROI[2],
+                        facecolor='none', edgecolor='w')
         ax.add_patch(box)
 
     return art, cax, cb
