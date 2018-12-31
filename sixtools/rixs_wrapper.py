@@ -68,8 +68,8 @@ def centroids_to_spectrum(table, light_ROI=[0, np.inf, 0, np.inf],
                                     table['x_eta'] < light_ROI[1],
                                     table['y_eta'] >= light_ROI[2],
                                     table['y_eta'] < light_ROI[3],
-                                    table['y_eta'] >= min_threshold,
-                                    table['y_eta'] < max_threshold))
+                                    table['sum_regions'] >= min_threshold,
+                                    table['sum_regions'] < max_threshold))
 
     photon_events = table[choose][['x_eta', 'y_eta', 'sum_regions']].values
     photon_events[:, 2] = photon_events[:, 2]/ADU_per_photon
