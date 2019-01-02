@@ -14,8 +14,10 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
         axis to plot frame on
     frame : array
         2D image to plot
-    light_ROIs : list of [slice, slice]
-        Regions of interest to plot as white rectangles
+    light_ROI : list of lists
+        [[minx, maxx, miny, maxy], ...]
+        Define the region of the sensor to use.
+        Events are chosen with minx <= x < maxx and miny <= y < maxy
     cax : None or matplotlib axis object
         axis to plot colorbar on
         If none a colorbar is created
@@ -46,12 +48,9 @@ def plot_frame(ax, frame, light_ROIs=[], cax=None, **kwargs):
     cb = plt.colorbar(art, cax=cax)
 
     for light_ROI in light_ROIs:
-        row_i = light_ROI[0].start
-        row_f = light_ROI[0].stop
-        col_i = light_ROI[1].start
-        col_f = light_ROI[1].stop
-
-        box = Rectangle((col_i, row_i), (col_f-col_i), (row_f-row_i),
+        box = Rectangle((light_ROI[0], light_ROI[2]),
+                        light_ROI[1]-light_ROI[0],
+                        light_ROI[3]-light_ROI[2],
                         facecolor='none', edgecolor='w')
         ax.add_patch(box)
 
