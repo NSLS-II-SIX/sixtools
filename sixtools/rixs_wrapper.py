@@ -401,7 +401,7 @@ def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
     Returns
     -------
     scan : array
-        4D labeled array of RIXS spectra with structure
+        4D array of RIXS spectra with structure
         event, image_index, y, I
     """
     if hasattr(headers, 'data') is True:
