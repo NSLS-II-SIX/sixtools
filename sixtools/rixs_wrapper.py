@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import xarray as xr
 from scipy.interpolate import interp1d
 from pims import pipeline
 from rixs.process2d import apply_curvature, image_to_photon_events
@@ -255,6 +255,100 @@ def get_rixs(header, light_ROI=[0, np.inf, 0, np.inf],
                                     background=background)
 
 
+def make_dataset(headers, light_ROI=[0, np.inf, 0, np.inf],
+              curvature=np.array([0., 0., 0.]), bins=1,
+              ADU_per_photon=None, detector='rixscam_centroids',
+              min_threshold=-np.inf, max_threshold=np.inf,
+              background=None):
+    """
+    Make 4D xarray dataset of RIXS spectra with structure
+    event, image_index, y, I
+
+    Parameters
+    ----------
+    headers : databroker header object or iterable of same
+        iterable that returns databroker objects
+    light_ROI : [minx, maxx, miny, maxy]
+        Define the region of the sensor to use.
+        Events are chosen with minx <= x < maxx and miny <= y < maxy
+    curvature : array
+        The polynominal coeffcients describing the image curvature.
+        These are in decreasing order e.g.
+        .. code-block:: python
+
+           curvature[0]*x**2 + curvature[1]*x**1 + curvature[2]*x**0
+        The order of polynominal used is set by len(curvature) - 1
+    bins : float or array like
+        Binning in the y direction.
+        If `bins` is a sequence, it defines the bin edges,
+        including the rightmost edge.
+        If `bins' is a single number this defines the step
+        in the bins sequence, which is created using the min/max
+        of the input data. Half a bin may be discarded in order
+        to avoid errors at the edge. (Default 1.)
+    detector : string
+        name of the detector passed on header.data
+        At SIX
+        'rixscam_centroids' is the centroided data, which is the default
+        'rixscam_image' is the image data
+    min_threshold : float
+        fliter events below this threshold
+        defaults to -infinity to include all events
+    max_threshold : float
+        fliter events above this threshold
+        defaults to +infinity to include all events
+    background : array
+        2D array for background subtraction
+        Only used for image data.
+
+    Returns
+    -------
+    scan : array
+        4D array of RIXS spectra with structure
+        event, image_index, y, I
+    """
+    if hasattr(headers, 'data') is True:
+        headers = [headers]
+
+    rixs_generators = [get_rixs(h, light_ROI=light_ROI, curvature=curvature,
+                                bins=bins, detector=detector,
+                                ADU_per_photon=ADU_per_photon,
+                                min_threshold=min_threshold,
+                                max_threshold=max_threshold,
+                                background=background)
+                       for h in headers]
+
+    scan = np.concatenate([np.array([s for s in rg])
+                           for rg in rixs_generators])
+
+    I = scan[:, :, :, 1]
+    pixel = scan[:, :, :, 0]
+    
+    try:
+        iter(bins)
+    except TypeError:
+        bins = step_to_bins(pixel.min(), pixel.max(), bins)
+
+    try:
+        event_name = headers[0].start['motors'][0]
+        events = db.get_table(headers, fields=[event_name])[event_name]
+    except (AttributeError, KeyError):
+        event_name = 'event'
+        events = np.arange(I.shape[0])
+
+    ds = xr.Dataset({'intensity': ([event_name, 'frame', 'y'], I),
+                    'error': ([event_name, 'frame', 'y'], np.sqrt(I))},
+                    coords={event_name : events,
+                            'frame': np.arange(I.shape[1]),
+                            'pixel': ([event_name, 'frame', 'y'], pixel)},
+                    attrs=dict(scan_ids = [h.start['scan_id'] for h in headers],
+                               event_name=event_name,
+                               uids=[h.start['uid'] for h in headers],
+                               bins=bins,
+                               y=(bins[:-1] + bins[1:])/2))
+    return ds
+
+
 def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
               curvature=np.array([0., 0., 0.]), bins=1,
               ADU_per_photon=1, detector='rixscam_centroids',
@@ -323,8 +417,9 @@ def make_scan(headers, light_ROI=[0, np.inf, 0, np.inf],
 
     scan = np.concatenate([np.array([s for s in rg])
                            for rg in rixs_generators])
+    E = scan[0, 0, :, 0]
+    
     return scan
-
 
 def calibrate(scan, elastics=None, energy_per_pixel=1, I0s=None):
     """Apply energy per pixel, I0 and energy zero calibration.
